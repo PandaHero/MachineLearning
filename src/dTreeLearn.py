@@ -9,8 +9,7 @@ def createDataSet():
                [1, 1, 'yes'],
                [0, 0, 'no'],
                [0, 1, 'no'],
-               [0, 1, 'no']
-               ]
+               [0, 1, 'no']]
     labels = ['no surfacing', 'flippers']
     return dateSet, labels
 
@@ -26,14 +25,16 @@ def calcShannonEnt(dataSet):
         # 获取每行的最后一个数值,作为键值
         currentLabel = featVec[-1]
         labelCounts[currentLabel] = labelCounts.get(currentLabel, 0) + 1
+    # print(labelCounts)
     # 用所有标签的概率计算信息熵
     shannoEnt = 0.0
     # 计算所有标签出现的频次分别计算出现的概率，然后计算信息熵
     for key in labelCounts.keys():
         # 不同标签出现的概率
-        prob = float(labelCounts[key]) / numEntries
+        prob = float(labelCounts[key] / numEntries)
         # 计算以2为底的对数
         shannoEnt -= prob * log(prob, 2)
+
     return shannoEnt
 
 
@@ -51,6 +52,7 @@ def splitDataSet(dateSet, axis, value):
     for featVec in dateSet:
         # 若待划分的数据集特征值等于给定特征值，则把结果保存到retDataSet中
         if featVec[axis] == value:
+            # 当axis为0时,reduceFeatVec为空值
             reduceFeatVec = featVec[:axis]
             # 把两个列表合并
             reduceFeatVec.extend(featVec[axis + 1:])
@@ -59,8 +61,51 @@ def splitDataSet(dateSet, axis, value):
     return retDataSet
 
 
+# 计算特征值、划分数据集、计算最好的划分数据集的特征(实现了一层树的最好划分方式)
+def chooseBestFeatureToSplit(dataSet):
+    # 计算数据集中特征的数量，最后一列是标签值
+    numFeatures = len(dataSet[0]) - 1
+    # 计算原始数据集的信息熵(原始)
+    baseEntropy = calcShannonEnt(dataSet)
+    # 初始化最佳信息增益和最佳特征索引
+    bestInfoGain = 0.0
+    bestFeature = -1
+    # 遍历所有特征
+    for i in range(numFeatures):
+        # 把第i个索引对应的值提取出来
+        featList = [example[i] for example in dataSet]
+        # 把提出来的值唯一化
+        uniqueVals = set(featList)
+        print("--", uniqueVals)
+        # 初始化新熵
+        newEntropy = 0.0
+        # 遍历每一个特征属性中的特征值，对每一个特征划分一次数据集
+        for value in uniqueVals:
+            subDataSet = splitDataSet(dataSet, i, value)
+            # 计算子集占总集的元素数量百分比
+            prob = float(len(subDataSet) / len(dataSet))
+            newEntropy += prob * calcShannonEnt(subDataSet)
+        # 计算信息增益,信息增益越大，表示用特征属性(i)来划分数据集纯度提升越大
+        infoGain = baseEntropy - newEntropy
+        if infoGain > bestInfoGain:
+            bestInfoGain = infoGain
+            bestFeature = i
+    return bestFeature
+
+
+# 得到每一个类标签出现的次数,返回出现次数最多的分类名称
+def majorityCnt(classList):
+    classCount = {}
+    for vote in classList:
+        classCount[vote] = classCount.get(vote, 0) + 1
+    # 从大到小排序
+    sortedClassCount = sorted(classCount.items(), key=lambda classCount: classCount[1], reverse=True)
+    # 返回出现频率最大的那个标签作为子集的标签
+    return sortedClassCount[0][0]
+
 if __name__ == '__main__':
-    dateSet, labels = createDataSet()
-    print(calcShannonEnt(dateSet))
-    splitDataSet = splitDataSet(dateSet, 0, 1)
-    print(splitDataSet, type(splitDataSet))
+    dataSet, labels = createDataSet()
+    # print(calcShannonEnt(dateSet))
+    # splitDataSet = splitDataSet(dataSet, 0, 1)
+    # print(splitDataSet, type(splitDataSet))
+    print(chooseBestFeatureToSplit(dataSet))

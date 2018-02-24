@@ -1,4 +1,20 @@
-from math import log
+import ssl
+import urllib.request
 
-a = -float(2 / 5 * log(2 / 5, 2) + 3 / 5 * log(3 / 5, 2))
-print(a)
+host = 'https://ali-barcode.showapi.com'
+path = '/barcode'
+method = 'GET'
+appcode = '807cc5a8c3644173a0fcccb724bda651'
+querys = 'code=6938166920785'
+bodys = {}
+url = host + path + '?' + querys
+
+request = urllib.request.Request(url)
+request.add_header('Authorization', 'APPCODE ' + appcode)
+ctx = ssl.create_default_context()
+ctx.check_hostname = False
+ctx.verify_mode = ssl.CERT_NONE
+response = urllib.request.urlopen(request, context=ctx)
+content = response.read()
+if (content):
+    print(content.decode('utf-8'))
