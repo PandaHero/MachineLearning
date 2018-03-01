@@ -7,7 +7,7 @@ def createDataSet():
     # 最后一列出现不同标签的数量越高，则熵越大，代表无序程序越高，我们在数据集中添加的分类就越多
     dateSet = [[1, 1, 'yes'],
                [1, 1, 'yes'],
-               [0, 0, 'no'],
+               [1, 0, 'no'],
                [0, 1, 'no'],
                [0, 1, 'no']]
     labels = ['no surfacing', 'flippers']
@@ -34,7 +34,6 @@ def calcShannonEnt(dataSet):
         prob = float(labelCounts[key] / numEntries)
         # 计算以2为底的对数
         shannoEnt -= prob * log(prob, 2)
-
     return shannoEnt
 
 
@@ -93,7 +92,7 @@ def chooseBestFeatureToSplit(dataSet):
     return bestFeature
 
 
-# 得到每一个类标签出现的次数,返回出现次数最多的分类名称
+# 得到每一个类标签出现的次数,返回出现次数最多的分类名称(最后得到的数据子集中类标签依旧不唯一)
 def majorityCnt(classList):
     classCount = {}
     for vote in classList:
@@ -105,7 +104,7 @@ def majorityCnt(classList):
 
 if __name__ == '__main__':
     dataSet, labels = createDataSet()
-    # print(calcShannonEnt(dateSet))
+    print(calcShannonEnt(dataSet))
     # splitDataSet = splitDataSet(dataSet, 0, 1)
     # print(splitDataSet, type(splitDataSet))
     print(chooseBestFeatureToSplit(dataSet))
