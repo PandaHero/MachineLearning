@@ -9,7 +9,7 @@ def createDataSet():
                [1, 1, 'yes'],
                [1, 0, 'no'],
                [0, 1, 'no'],
-               [0, 1, 'no']]
+               [0, 1,'no']]
     labels = ['no surfacing', 'flippers']
     return dateSet, labels
 
@@ -75,7 +75,7 @@ def chooseBestFeatureToSplit(dataSet):
         featList = [example[i] for example in dataSet]
         # 把提出来的值唯一化
         uniqueVals = set(featList)
-        print("--", uniqueVals)
+        # print("--", uniqueVals)
         # 初始化新熵
         newEntropy = 0.0
         # 遍历每一个特征属性中的特征值，对每一个特征划分一次数据集
@@ -102,9 +102,43 @@ def majorityCnt(classList):
     # 返回出现频率最大的那个标签作为子集的标签
     return sortedClassCount[0][0]
 
+
+# 创建树的函数
+def createTree(dataSet, labels):
+    # 三种情况会导致递归返回
+    # 1、当前结点包含的样本全部属于同一个标记，无需划分
+    # 2、当前属性集为空，或者所有样本在所有属性上取值相同，无法划分
+    # 3、当前节点包含的样本集合为空，不能划分
+    # 提取数据集中的最后一列元素（标记）
+    classList = [example[-1] for example in dataSet]
+    # 若数据集中的标记完全相同则停止划分
+    if classList.count(classList[0]) == len(classList):
+        print("正在调用",classList[0])
+        return classList[0]
+    # 遍历完所有特征时返回出现次数最多的标签
+    if len(dataSet[0]) == 1:
+        return majorityCnt(classList)
+    bestFeat = chooseBestFeatureToSplit(dataSet)
+    bestFeatLabel = labels[bestFeat]
+    # 使用字典存储树的信息
+    myTree = {bestFeatLabel: {}}
+    # 删除数据集中最好特征值对应的标签值
+    del (labels[bestFeat])
+    # 获取最好特征对应的那一列数据组成列表
+    featValues = [example[bestFeat] for example in dataSet]
+    # 唯一化
+    uniqueVals = set(featValues)
+    for value in uniqueVals:
+        # 复制类标签
+        subLabels = labels[:]
+        myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet, bestFeat, value), subLabels)
+    return myTree
+
+
 if __name__ == '__main__':
     dataSet, labels = createDataSet()
-    print(calcShannonEnt(dataSet))
-    # splitDataSet = splitDataSet(dataSet, 0, 1)
-    # print(splitDataSet, type(splitDataSet))
-    print(chooseBestFeatureToSplit(dataSet))
+    # print(calcShannonEnt(dataSet))
+    # # splitDataSet = splitDataSet(dataSet, 0, 1)
+    # # print(splitDataSet, type(splitDataSet))
+    # print(chooseBestFeatureToSplit(dataSet))
+    print(createTree(dataSet, labels))
