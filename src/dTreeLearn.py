@@ -9,7 +9,7 @@ def createDataSet():
                [1, 1, 'yes'],
                [1, 0, 'no'],
                [0, 1, 'no'],
-               [0, 1,'no']]
+               [0, 1, 'no']]
     labels = ['no surfacing', 'flippers']
     return dateSet, labels
 
@@ -113,7 +113,7 @@ def createTree(dataSet, labels):
     classList = [example[-1] for example in dataSet]
     # 若数据集中的标记完全相同则停止划分
     if classList.count(classList[0]) == len(classList):
-        print("正在调用",classList[0])
+        # print("正在调用", classList[0])
         return classList[0]
     # 遍历完所有特征时返回出现次数最多的标签
     if len(dataSet[0]) == 1:
@@ -135,10 +135,27 @@ def createTree(dataSet, labels):
     return myTree
 
 
+# 获取叶节点的数目
+def getNumLeafs(myTree):
+    # 设置叶节点的初始值
+    numLeafs = 0
+    # 获取树的第一层内节点
+    firstStr = list(myTree.keys())[0]
+    secondDict = myTree[firstStr]
+    for key in secondDict.keys():
+        if isinstance(secondDict[key],dict):
+            numLeafs += getNumLeafs(secondDict[key])
+        else:
+            numLeafs += 1
+    return numLeafs
+
+
 if __name__ == '__main__':
     dataSet, labels = createDataSet()
     # print(calcShannonEnt(dataSet))
     # # splitDataSet = splitDataSet(dataSet, 0, 1)
     # # print(splitDataSet, type(splitDataSet))
     # print(chooseBestFeatureToSplit(dataSet))
-    print(createTree(dataSet, labels))
+    myTree = createTree(dataSet, labels)
+    print(myTree)
+    print(getNumLeafs(myTree))
