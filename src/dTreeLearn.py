@@ -135,21 +135,6 @@ def createTree(dataSet, labels):
     return myTree
 
 
-# 获取叶节点的数目
-def getNumLeafs(myTree):
-    # 设置叶节点的初始值
-    numLeafs = 0
-    # 获取树的第一层内节点
-    firstStr = list(myTree.keys())[0]
-    secondDict = myTree[firstStr]
-    for key in secondDict.keys():
-        if isinstance(secondDict[key],dict):
-            numLeafs += getNumLeafs(secondDict[key])
-        else:
-            numLeafs += 1
-    return numLeafs
-
-
 if __name__ == '__main__':
     dataSet, labels = createDataSet()
     # print(calcShannonEnt(dataSet))
