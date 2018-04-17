@@ -4,6 +4,10 @@ from numpy import *
 # k近邻算法
 # 训练样本数据
 def createDataSet():
+    '''
+
+    :return:
+    '''
     # 训练数组
     group = array([[1.0, 1.1], [1.0, 1.0], [0, 0], [0, 0.1]])
     # 训练标签
