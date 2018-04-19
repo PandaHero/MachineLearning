@@ -57,11 +57,12 @@ print(np.sum(a))  # 求和函数
 print(np.mean(a))  # 平均值函数
 print(np.std(a))  # 方差函数
 
-# 展开一个numpy数组为1维数组(返回结果为拷贝，不影响原始数组)
+# 展开一个numpy数组为1维数组(返回结果为拷贝，不影响原始数组c=[[1 2 3][4 5 6]])
 print(c.flatten())
 # 展开一个可解析的结构为1维数组(返回结果为视图，修改视图会改变原始数组)
 print(np.ravel(c))
 # 更改数组的元素类型
+print("#############")
 print(c.astype(np.float), c.astype(np.float))
 
 # 读取与保存
@@ -101,5 +102,11 @@ print(random.random((2, 2)))  # 2*2的随机数数组
 print(random.sample((2, 2)))  # 2*2的随机数数组
 print(random.random_sample((2, 2)))  # 2*2的随机数数组
 print(random.ranf((2, 2)))  # 2*2的随机数数组
-print(5 * random.random(10) + 1)  # 产生长度为10的随机数数组
-print(random.uniform(1, 6, 10))  # 产生长度为10取值范围[1,6)的随机数数组
+print(5 * random.random(10) + 1)  # 产生长度为10的浮点型随机数数组
+print(random.uniform(1, 6, 10))  # 产生长度为10取值范围[1,6)的浮点型随机数数组
+print(random.randint(1, 6, 10))  # 产生长度为10取值范围[1,6)的整型随机数数组
+print(random.normal(size=(5, 2)))  # 产生5*2的标准正态分布
+print(random.binomial(n=5, p=0.5, size=5))  # 产生5个n=5,p=0.5的二项分布
+print(random.choice(a, 2))  # 从a中有放回的随机抽取2个元素
+print(random.choice(a, 2, replace=False))  # 从a中无放回的抽取2个元素
+print(sum(np.random.binomial(9, 0.1, 20000) == 0) / 20000)
